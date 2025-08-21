@@ -1,0 +1,5 @@
+
+# Ignore contents of .prerolls directories
+.prerolls/enabled/*
+.prerolls/disabled/*
+
