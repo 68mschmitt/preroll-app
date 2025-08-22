@@ -10,8 +10,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const ENABLED_DIR = 'app/server/preroll/enabled';
-const DISABLED_DIR = 'app/server/preroll/disabled';
+const ENABLED_DIR = '/app/server/preroll/enabled';
+const DISABLED_DIR = '/app/server/preroll/disabled';
 
 for (const d of [ENABLED_DIR, DISABLED_DIR]) {
   if (!existsSync(d)) await fs.mkdir(d, { recursive: true });
