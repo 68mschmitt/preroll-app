@@ -9,7 +9,7 @@ services:
       - "8080:8080"
     volumes:
       - ./server/preroll:/app/server/preroll
-      - ./server/preroll/plex-config:/app/server/preroll/plex-config
+      - "./server/plex-config/Plex Media Server:/app/server/plex-config"
     environment:
       - NODE_ENV=production
 

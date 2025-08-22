@@ -67,7 +67,7 @@ const updatePlexPreroll = async () => {
     .map(f => path.join(ENABLED_DIR, f))
     .join(';');
 
-  const configFilePath = path.resolve('./preroll/plex-config/Preferences.xml');
+  const configFilePath = path.resolve('./plex-config/Plex Media Server/Preferences.xml');
   updateCinemaTrailersPrerollID(configFilePath, value);
 };
 
