@@ -1,5 +1,5 @@
 # Ignore contents of .prerolls directories
-.prerolls/enabled/*
-.prerolls/disabled/*
-
+server/preroll/enabled/*
+server/preroll/disabled/*
+server/preroll/plex-config/*
 server/.env

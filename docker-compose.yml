@@ -1,0 +1,15 @@
+services:
+  app:
+    container_name: preroll-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5175:5175"
+      - "8080:8080"
+    volumes:
+      - ./server/preroll:/app/server/preroll
+      - ./server/preroll/plex-config:/app/server/preroll/plex-config
+    environment:
+      - NODE_ENV=production
+

@@ -5,16 +5,13 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { spawn } from 'node:child_process';
-import fetch from 'node-fetch';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const ENABLED_DIR  = process.env.ENABLED_DIR;
-const DISABLED_DIR = process.env.DISABLED_DIR;
-const PLEX_BASE_URL = process.env.PLEX_BASE_URL;   // e.g. http://127.0.0.1:32400
-const PLEX_TOKEN    = process.env.PLEX_TOKEN;
+const ENABLED_DIR = './preroll/enabled';
+const DISABLED_DIR = './preroll/disabled';
 
 for (const d of [ENABLED_DIR, DISABLED_DIR]) {
   if (!existsSync(d)) await fs.mkdir(d, { recursive: true });
@@ -61,20 +58,17 @@ const statList = async (dir, kind) => {
   return items;
 };
 
+import updateCinemaTrailersPrerollID from './plexUtils.js';
+
 const updatePlexPreroll = async () => {
   const enabled = await listMp4(ENABLED_DIR);
   // Absolute paths, comma-separated (sequential play)
   const value = enabled
     .map(f => path.join(ENABLED_DIR, f))
-    .join(',');
+    .join(';');
 
-  const url = `${PLEX_BASE_URL}/:/prefs?cinemaTrailersPrerollID=${encodeURIComponent(value)}&X-Plex-Token=${encodeURIComponent(PLEX_TOKEN)}`;
-
-  const res = await fetch(url, { method: 'PUT' });
-  if (!res.ok) {
-    const t = await res.text();
-    throw new Error(`Failed to update Plex pre-roll: ${res.status} ${t}`);
-  }
+  const configFilePath = path.resolve('./preroll/plex-config/Preferences.xml');
+  updateCinemaTrailersPrerollID(configFilePath, value);
 };
 
 const listAll = async () => {
@@ -180,5 +174,5 @@ app.post('/api/disableAll', async (_req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-const PORT = Number(process.env.PORT || 5175);
+const PORT = 5175;
 app.listen(PORT, () => console.log(`Server on http://localhost:${PORT}`));
