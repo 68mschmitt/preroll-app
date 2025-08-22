@@ -113,6 +113,7 @@ app.post('/api/import', async (req, res) => {
     url
   ];
 
+  console.log(`Starting import for video with ID: ${id}`);
   const child = spawn('yt-dlp', args, { stdio: ['ignore','pipe','pipe'] });
   let logs = '';
   child.stdout.on('data', d => logs += d.toString());
@@ -135,6 +136,7 @@ app.patch('/api/videos/:id/toggle', async (req, res) => {
   try {
     if (!existsSync(from)) return res.status(404).json({ error: 'File not found in source folder.' });
     await fs.rename(from, to);
+    console.log(`File moved to ${to}`);
     await updatePlexPreroll();
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -144,10 +146,17 @@ app.patch('/api/videos/:id/toggle', async (req, res) => {
 app.delete('/api/videos/:id', async (req, res) => {
   const id = req.params.id;
   const p1 = path.join(ENABLED_DIR, `${id}.mp4`);
-  const p2 = path.join(DISABLED_DIR, `${id}.mp4`);
+      const p2 = path.join(DISABLED_DIR, `${id}.mp4`);
+      console.log(`Attempting to delete files at paths: ${p1} and ${p2}`);
   try {
-    if (existsSync(p1)) await fs.rm(p1);
-    else if (existsSync(p2)) await fs.rm(p2);
+    if (existsSync(p1)) {
+      await fs.rm(p1);
+      console.log(`Deleted file at path: ${p1}`);
+    }
+    else if (existsSync(p2)) {
+      await fs.rm(p2);
+      console.log(`Deleted file at path: ${p2}`);
+    }
     else return res.status(404).json({ error: 'Not found.' });
 
     await updatePlexPreroll();
